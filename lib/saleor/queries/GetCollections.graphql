@@ -8,6 +8,13 @@ query GetCollections {
         description
         seoTitle
         seoDescription
+        products(first: 1, sortBy: { field: LAST_MODIFIED_AT, direction: DESC }) {
+          edges {
+            node {
+              updatedAt
+            }
+          }
+        }
       }
     }
   }

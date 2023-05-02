@@ -35,17 +35,9 @@ query GetCategoryProductsBySlug($slug: String!) {
             name
           }
           updatedAt
+
           variants {
-            id
-            name
-            pricing {
-              price {
-                gross {
-                  currency
-                  amount
-                }
-              }
-            }
+            ...Variant
           }
         }
       }

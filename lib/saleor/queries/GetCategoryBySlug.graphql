@@ -6,5 +6,16 @@ query GetCategoryBySlug($slug: String!) {
     description
     seoTitle
     seoDescription
+    products(
+      channel: "default-channel"
+      first: 1
+      sortBy: { field: LAST_MODIFIED_AT, direction: DESC }
+    ) {
+      edges {
+        node {
+          updatedAt
+        }
+      }
+    }
   }
 }

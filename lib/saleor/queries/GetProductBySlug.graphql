@@ -33,16 +33,7 @@ query GetProductBySlug($slug: String!) {
     }
     updatedAt
     variants {
-      id
-      name
-      pricing {
-        price {
-          gross {
-            currency
-            amount
-          }
-        }
-      }
+      ...Variant
     }
   }
 }

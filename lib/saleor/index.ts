@@ -1,5 +1,4 @@
 import { Cart, Collection, Menu, Page, Product } from 'lib/types';
-import { parseEditorJsToHtml } from './editorjs';
 import {
   GetCategoryBySlugDocument,
   GetCategoryProductsBySlugDocument,
@@ -16,6 +15,7 @@ import {
   SearchProductsDocument,
   TypedDocumentString
 } from './generated/graphql';
+import { saleorProductToVercelProduct } from './mappers';
 import { invariant } from './utils';
 
 const endpoint = process.env.SALEOR_INSTANCE_URL;
@@ -78,7 +78,7 @@ export async function getCollections(): Promise<Collection[]> {
           title: edge.node.seoTitle || edge.node.name,
           description: edge.node.seoDescription || ''
         },
-        updatedAt: '', // @todo ?
+        updatedAt: edge.node.products?.edges?.[0]?.node.updatedAt || '',
         path: `/search/${edge.node.slug}`
       };
     }) ?? []
@@ -124,60 +124,7 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
     throw new Error(`Product not found: ${handle}`);
   }
 
-  const images =
-    saleorProduct.product.media
-      ?.filter((media) => media.type === 'IMAGE')
-      .map((media) => {
-        return {
-          url: media.url,
-          altText: media.alt,
-          width: 2048,
-          height: 2048
-        };
-      }) || [];
-
-  return {
-    id: saleorProduct.product.id,
-    handle: saleorProduct.product.slug,
-    availableForSale: saleorProduct.product.isAvailableForPurchase || true,
-    title: saleorProduct.product.name,
-    description: saleorProduct.product.description || '',
-    descriptionHtml: saleorProduct.product.description
-      ? parseEditorJsToHtml(saleorProduct.product.description)
-      : '',
-    options: [], // @todo
-    priceRange: {
-      maxVariantPrice: {
-        amount: saleorProduct.product.pricing?.priceRange?.stop?.gross.amount.toString() || '0',
-        currencyCode: saleorProduct.product.pricing?.priceRange?.stop?.gross.currency || ''
-      },
-      minVariantPrice: {
-        amount: saleorProduct.product.pricing?.priceRange?.start?.gross.amount.toString() || '0',
-        currencyCode: saleorProduct.product.pricing?.priceRange?.start?.gross.currency || ''
-      }
-    },
-    variants:
-      saleorProduct.product.variants?.map((variant) => {
-        return {
-          id: variant.id,
-          title: variant.name,
-          availableForSale: saleorProduct.product?.isAvailableForPurchase || true,
-          selectedOptions: [], // @todo
-          price: {
-            amount: variant.pricing?.price?.gross.amount.toString() || '0',
-            currencyCode: variant.pricing?.price?.gross.currency || ''
-          }
-        };
-      }) || [],
-    images: images,
-    featuredImage: images[0]!,
-    seo: {
-      title: saleorProduct.product.seoTitle || saleorProduct.product.name,
-      description: saleorProduct.product.seoDescription || ''
-    },
-    tags: saleorProduct.product.collections?.map((c) => c.name) || [],
-    updatedAt: saleorProduct.product.updatedAt
-  };
+  return saleorProductToVercelProduct(saleorProduct.product);
 }
 
 const _getCollection = async (handle: string) =>
@@ -214,7 +161,7 @@ export async function getCollection(handle: string): Promise<Collection | undefi
       title: saleorCollection.seoTitle || saleorCollection.name,
       description: saleorCollection.seoDescription || ''
     },
-    updatedAt: '', // @todo ?
+    updatedAt: saleorCollection.products?.edges?.[0]?.node.updatedAt || '',
     path: `/search/${saleorCollection.slug}`
   };
 }
@@ -251,62 +198,9 @@ export async function getCollectionProducts(handle: string): Promise<Product[]> 
   }
 
   return (
-    saleorCollectionProducts.products?.edges.map((product) => {
-      const images =
-        product.node.media
-          ?.filter((media) => media.type === 'IMAGE')
-          .map((media) => {
-            return {
-              url: media.url,
-              altText: media.alt,
-              width: 2048,
-              height: 2048
-            };
-          }) || [];
-
-      return {
-        id: product.node.id,
-        handle: product.node.slug,
-        availableForSale: product.node.isAvailableForPurchase || true,
-        title: product.node.name,
-        description: product.node.description || '',
-        descriptionHtml: product.node.description
-          ? parseEditorJsToHtml(product.node.description)
-          : '',
-        options: [], // @todo
-        priceRange: {
-          maxVariantPrice: {
-            amount: product.node.pricing?.priceRange?.stop?.gross.amount.toString() || '0',
-            currencyCode: product.node.pricing?.priceRange?.stop?.gross.currency || ''
-          },
-          minVariantPrice: {
-            amount: product.node.pricing?.priceRange?.start?.gross.amount.toString() || '0',
-            currencyCode: product.node.pricing?.priceRange?.start?.gross.currency || ''
-          }
-        },
-        variants:
-          product.node.variants?.map((variant) => {
-            return {
-              id: variant.id,
-              title: variant.name,
-              availableForSale: product.node?.isAvailableForPurchase || true,
-              selectedOptions: [], // @todo
-              price: {
-                amount: variant.pricing?.price?.gross.amount.toString() || '0',
-                currencyCode: variant.pricing?.price?.gross.currency || ''
-              }
-            };
-          }) || [],
-        images: images,
-        featuredImage: images[0]!,
-        seo: {
-          title: product.node.seoTitle || product.node.name,
-          description: product.node.seoDescription || ''
-        },
-        tags: product.node.collections?.map((c) => c.name) || [],
-        updatedAt: product.node.updatedAt
-      };
-    }) || []
+    saleorCollectionProducts.products?.edges.map((product) =>
+      saleorProductToVercelProduct(product.node)
+    ) || []
   );
 }
 
@@ -327,25 +221,16 @@ export async function getMenu(handle: string): Promise<Menu[]> {
     throw new Error(`Menu not found: ${handle}`);
   }
 
-  const result = flattenMenuItems(saleorMenu.menu.items);
-
-  return (
-    result
-      .filter(
-        (menu) =>
-          menu.path &&
-          // manually removing empty categories
-          // @todo ?
-          menu.path !== '/search/paints' &&
-          menu.path !== '/search/juices' &&
-          menu.path !== '/search/alcohol' &&
-          menu.path !== '/search/homewares' &&
-          menu.path !== '/search/groceries'
-      )
-      // unique by path
-      .filter((item1, idx, arr) => arr.findIndex((item2) => item2.path === item1.path) === idx)
-      .slice(0, 3)
+  const result = flattenMenuItems(saleorMenu.menu.items).filter(
+    // unique by path
+    (item1, idx, arr) => arr.findIndex((item2) => item2.path === item1.path) === idx
   );
+
+  if (handle === 'next-js-frontend-header-menu') {
+    // limit number of items in header to 3
+    return result.slice(0, 3);
+  }
+  return result;
 }
 
 type MenuItemWithChildren = MenuItemFragment & {
@@ -354,6 +239,14 @@ type MenuItemWithChildren = MenuItemFragment & {
 function flattenMenuItems(menuItems: null | undefined | MenuItemWithChildren[]): Menu[] {
   return (
     menuItems?.flatMap((item) => {
+      // Remove empty categories and collections from menu
+      if (item.category && !item.category.products?.totalCount) {
+        return [];
+      }
+      if (item.collection && !item.collection.products?.totalCount) {
+        return [];
+      }
+
       const path =
         item.url ||
         (item.collection
@@ -361,11 +254,16 @@ function flattenMenuItems(menuItems: null | undefined | MenuItemWithChildren[]):
           : item.category
           ? `/search/${item.category.slug}`
           : '');
+
       return [
-        {
-          path: path,
-          title: item.name
-        },
+        ...(path
+          ? [
+              {
+                path: path,
+                title: item.name
+              }
+            ]
+          : []),
         ...flattenMenuItems(item.children)
       ];
     }) || []
@@ -391,62 +289,8 @@ export async function getProducts({
   });
 
   return (
-    saleorProducts.products?.edges.map((product) => {
-      const images =
-        product.node.media
-          ?.filter((media) => media.type === 'IMAGE')
-          .map((media) => {
-            return {
-              url: media.url,
-              altText: media.alt,
-              width: 2048,
-              height: 2048
-            };
-          }) || [];
-
-      return {
-        id: product.node.id,
-        handle: product.node.slug,
-        availableForSale: product.node.isAvailableForPurchase || true,
-        title: product.node.name,
-        description: product.node.description || '',
-        descriptionHtml: product.node.description
-          ? parseEditorJsToHtml(product.node.description)
-          : '',
-        options: [], // @todo
-        priceRange: {
-          maxVariantPrice: {
-            amount: product.node.pricing?.priceRange?.stop?.gross.amount.toString() || '0',
-            currencyCode: product.node.pricing?.priceRange?.stop?.gross.currency || ''
-          },
-          minVariantPrice: {
-            amount: product.node.pricing?.priceRange?.start?.gross.amount.toString() || '0',
-            currencyCode: product.node.pricing?.priceRange?.start?.gross.currency || ''
-          }
-        },
-        variants:
-          product.node.variants?.map((variant) => {
-            return {
-              id: variant.id,
-              title: variant.name,
-              availableForSale: product.node?.isAvailableForPurchase || true,
-              selectedOptions: [], // @todo
-              price: {
-                amount: variant.pricing?.price?.gross.amount.toString() || '0',
-                currencyCode: variant.pricing?.price?.gross.currency || ''
-              }
-            };
-          }) || [],
-        images: images,
-        featuredImage: images[0]!,
-        seo: {
-          title: product.node.seoTitle || product.node.name,
-          description: product.node.seoDescription || ''
-        },
-        tags: product.node.collections?.map((c) => c.name) || [],
-        updatedAt: product.node.updatedAt
-      };
-    }) || []
+    saleorProducts.products?.edges.map((product) => saleorProductToVercelProduct(product.node)) ||
+    []
   );
 }
 

@@ -4,9 +4,15 @@ fragment MenuItem on MenuItem {
   url
   collection {
     slug
+    products(first: 0) {
+      totalCount
+    }
   }
   category {
     slug
+    products(channel: "default-channel", first: 0) {
+      totalCount
+    }
   }
   page {
     slug

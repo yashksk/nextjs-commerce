@@ -6,7 +6,9 @@ generates:
     preset: 'client'
     presetConfig:
       fragmentMasking: false
+      dedupeFragments: true
     config:
+      exportFragmentSpreadSubTypes: true
       defaultScalarType: 'unknown'
       useTypeImports: true
       dedupeFragments: true

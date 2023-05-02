@@ -24528,6 +24528,20 @@ export type FeaturedProductFragment = {
   }> | null;
 };
 
+export type VariantFragment = {
+  id: string;
+  name: string;
+  attributes: Array<{
+    attribute: {
+      slug?: string | null;
+      name?: string | null;
+      choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+    };
+    values: Array<{ name?: string | null }>;
+  }>;
+  pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+};
+
 export type GetCategoryBySlugQueryVariables = Exact<{
   slug: Scalars['String'];
 }>;
@@ -24540,6 +24554,7 @@ export type GetCategoryBySlugQuery = {
     description?: string | null;
     seoTitle?: string | null;
     seoDescription?: string | null;
+    products?: { edges: Array<{ node: { updatedAt: string } }> } | null;
   } | null;
 };
 
@@ -24571,6 +24586,14 @@ export type GetCategoryProductsBySlugQuery = {
           variants?: Array<{
             id: string;
             name: string;
+            attributes: Array<{
+              attribute: {
+                slug?: string | null;
+                name?: string | null;
+                choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+              };
+              values: Array<{ name?: string | null }>;
+            }>;
             pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
           }> | null;
         };
@@ -24591,6 +24614,7 @@ export type GetCollectionBySlugQuery = {
     description?: string | null;
     seoTitle?: string | null;
     seoDescription?: string | null;
+    products?: { edges: Array<{ node: { updatedAt: string } }> } | null;
   } | null;
 };
 
@@ -24622,6 +24646,14 @@ export type GetCollectionProductsBySlugQuery = {
           variants?: Array<{
             id: string;
             name: string;
+            attributes: Array<{
+              attribute: {
+                slug?: string | null;
+                name?: string | null;
+                choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+              };
+              values: Array<{ name?: string | null }>;
+            }>;
             pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
           }> | null;
         };
@@ -24642,6 +24674,7 @@ export type GetCollectionsQuery = {
         description?: string | null;
         seoTitle?: string | null;
         seoDescription?: string | null;
+        products?: { edges: Array<{ node: { updatedAt: string } }> } | null;
       };
     }>;
   } | null;
@@ -24685,8 +24718,8 @@ export type MenuItemFragment = {
   id: string;
   name: string;
   url?: string | null;
-  collection?: { slug: string } | null;
-  category?: { slug: string } | null;
+  collection?: { slug: string; products?: { totalCount?: number | null } | null } | null;
+  category?: { slug: string; products?: { totalCount?: number | null } | null } | null;
   page?: { slug: string } | null;
 };
 
@@ -24715,20 +24748,20 @@ export type GetMenuBySlugQuery = {
             id: string;
             name: string;
             url?: string | null;
-            collection?: { slug: string } | null;
-            category?: { slug: string } | null;
+            collection?: { slug: string; products?: { totalCount?: number | null } | null } | null;
+            category?: { slug: string; products?: { totalCount?: number | null } | null } | null;
             page?: { slug: string } | null;
           }> | null;
-          collection?: { slug: string } | null;
-          category?: { slug: string } | null;
+          collection?: { slug: string; products?: { totalCount?: number | null } | null } | null;
+          category?: { slug: string; products?: { totalCount?: number | null } | null } | null;
           page?: { slug: string } | null;
         }> | null;
-        collection?: { slug: string } | null;
-        category?: { slug: string } | null;
+        collection?: { slug: string; products?: { totalCount?: number | null } | null } | null;
+        category?: { slug: string; products?: { totalCount?: number | null } | null } | null;
         page?: { slug: string } | null;
       }> | null;
-      collection?: { slug: string } | null;
-      category?: { slug: string } | null;
+      collection?: { slug: string; products?: { totalCount?: number | null } | null } | null;
+      category?: { slug: string; products?: { totalCount?: number | null } | null } | null;
       page?: { slug: string } | null;
     }> | null;
   } | null;
@@ -24793,6 +24826,14 @@ export type GetProductBySlugQuery = {
     variants?: Array<{
       id: string;
       name: string;
+      attributes: Array<{
+        attribute: {
+          slug?: string | null;
+          name?: string | null;
+          choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+        };
+        values: Array<{ name?: string | null }>;
+      }>;
       pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
     }> | null;
   } | null;
@@ -24827,6 +24868,14 @@ export type SearchProductsQuery = {
         variants?: Array<{
           id: string;
           name: string;
+          attributes: Array<{
+            attribute: {
+              slug?: string | null;
+              name?: string | null;
+              choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+            };
+            values: Array<{ name?: string | null }>;
+          }>;
           pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
         }> | null;
       };
@@ -24900,6 +24949,36 @@ export const FeaturedProductFragmentDoc = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<FeaturedProductFragment, unknown>;
+export const VariantFragmentDoc = new TypedDocumentString(`
+    fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
+    }
+  }
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<VariantFragment, unknown>;
 export const MenuItemFragmentDoc = new TypedDocumentString(`
     fragment MenuItem on MenuItem {
   id
@@ -24907,9 +24986,15 @@ export const MenuItemFragmentDoc = new TypedDocumentString(`
   url
   collection {
     slug
+    products(first: 0) {
+      totalCount
+    }
   }
   category {
     slug
+    products(channel: "default-channel", first: 0) {
+      totalCount
+    }
   }
   page {
     slug
@@ -24925,6 +25010,17 @@ export const GetCategoryBySlugDocument = new TypedDocumentString(`
     description
     seoTitle
     seoDescription
+    products(
+      channel: "default-channel"
+      first: 1
+      sortBy: {field: LAST_MODIFIED_AT, direction: DESC}
+    ) {
+      edges {
+        node {
+          updatedAt
+        }
+      }
+    }
   }
 }
     `) as unknown as TypedDocumentString<GetCategoryBySlugQuery, GetCategoryBySlugQueryVariables>;
@@ -24967,23 +25063,41 @@ export const GetCategoryProductsBySlugDocument = new TypedDocumentString(`
           }
           updatedAt
           variants {
-            id
-            name
-            pricing {
-              price {
-                gross {
-                  currency
-                  amount
-                }
-              }
-            }
+            ...Variant
           }
         }
       }
     }
   }
 }
-    `) as unknown as TypedDocumentString<
+    fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
+    }
+  }
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<
   GetCategoryProductsBySlugQuery,
   GetCategoryProductsBySlugQueryVariables
 >;
@@ -24996,6 +25110,13 @@ export const GetCollectionBySlugDocument = new TypedDocumentString(`
     description
     seoTitle
     seoDescription
+    products(first: 1, sortBy: {field: LAST_MODIFIED_AT, direction: DESC}) {
+      edges {
+        node {
+          updatedAt
+        }
+      }
+    }
   }
 }
     `) as unknown as TypedDocumentString<
@@ -25041,23 +25162,41 @@ export const GetCollectionProductsBySlugDocument = new TypedDocumentString(`
           }
           updatedAt
           variants {
-            id
-            name
-            pricing {
-              price {
-                gross {
-                  currency
-                  amount
-                }
-              }
-            }
+            ...Variant
           }
         }
       }
     }
   }
 }
-    `) as unknown as TypedDocumentString<
+    fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
+    }
+  }
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<
   GetCollectionProductsBySlugQuery,
   GetCollectionProductsBySlugQueryVariables
 >;
@@ -25072,6 +25211,13 @@ export const GetCollectionsDocument = new TypedDocumentString(`
         description
         seoTitle
         seoDescription
+        products(first: 1, sortBy: {field: LAST_MODIFIED_AT, direction: DESC}) {
+          edges {
+            node {
+              updatedAt
+            }
+          }
+        }
       }
     }
   }
@@ -25159,9 +25305,15 @@ export const GetMenuBySlugDocument = new TypedDocumentString(`
   url
   collection {
     slug
+    products(first: 0) {
+      totalCount
+    }
   }
   category {
     slug
+    products(channel: "default-channel", first: 0) {
+      totalCount
+    }
   }
   page {
     slug
@@ -25233,20 +25385,38 @@ export const GetProductBySlugDocument = new TypedDocumentString(`
     }
     updatedAt
     variants {
-      id
+      ...Variant
+    }
+  }
+}
+    fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
       name
-      pricing {
-        price {
-          gross {
-            currency
-            amount
+      choices(first: 100) {
+        edges {
+          node {
+            name
           }
         }
       }
     }
+    values {
+      name
+    }
   }
-}
-    `) as unknown as TypedDocumentString<GetProductBySlugQuery, GetProductBySlugQueryVariables>;
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<GetProductBySlugQuery, GetProductBySlugQueryVariables>;
 export const SearchProductsDocument = new TypedDocumentString(`
     query SearchProducts($search: String!, $sortBy: ProductOrderField!, $sortDirection: OrderDirection!) {
   products(
@@ -25290,22 +25460,40 @@ export const SearchProductsDocument = new TypedDocumentString(`
         }
         updatedAt
         variants {
-          id
-          name
-          pricing {
-            price {
-              gross {
-                currency
-                amount
-              }
-            }
-          }
+          ...Variant
         }
       }
     }
   }
 }
-    `) as unknown as TypedDocumentString<SearchProductsQuery, SearchProductsQueryVariables>;
+    fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
+    }
+  }
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<SearchProductsQuery, SearchProductsQueryVariables>;
 export const GetProductsDocument = new TypedDocumentString(`
     query GetProducts {
   products(first: 10, channel: "default-channel") {

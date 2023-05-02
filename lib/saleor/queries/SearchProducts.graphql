@@ -44,16 +44,7 @@ query SearchProducts(
         }
         updatedAt
         variants {
-          id
-          name
-          pricing {
-            price {
-              gross {
-                currency
-                amount
-              }
-            }
-          }
+          ...Variant
         }
       }
     }
