@@ -24504,6 +24504,64 @@ export type _Service = {
   sdl?: Maybe<Scalars['String']>;
 };
 
+export type CheckoutFragment = {
+  id: string;
+  quantity: number;
+  totalPrice: {
+    gross: { currency: string; amount: number };
+    tax: { currency: string; amount: number };
+  };
+  subtotalPrice: { gross: { currency: string; amount: number } };
+  lines: Array<{
+    id: string;
+    quantity: number;
+    variant: {
+      id: string;
+      name: string;
+      product: {
+        id: string;
+        slug: string;
+        name: string;
+        isAvailableForPurchase?: boolean | null;
+        description?: string | null;
+        seoTitle?: string | null;
+        seoDescription?: string | null;
+        updatedAt: string;
+        pricing?: {
+          priceRange?: {
+            start?: { gross: { currency: string; amount: number } } | null;
+            stop?: { gross: { currency: string; amount: number } } | null;
+          } | null;
+        } | null;
+        media?: Array<{ url: string; type: ProductMediaType; alt: string }> | null;
+        collections?: Array<{ name: string }> | null;
+        variants?: Array<{
+          id: string;
+          name: string;
+          attributes: Array<{
+            attribute: {
+              slug?: string | null;
+              name?: string | null;
+              choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+            };
+            values: Array<{ name?: string | null }>;
+          }>;
+          pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+        }> | null;
+      };
+      attributes: Array<{
+        attribute: {
+          slug?: string | null;
+          name?: string | null;
+          choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+        };
+        values: Array<{ name?: string | null }>;
+      }>;
+      pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+    };
+  }>;
+};
+
 export type FeaturedProductFragment = {
   id: string;
   slug: string;
@@ -24528,6 +24586,38 @@ export type FeaturedProductFragment = {
   }> | null;
 };
 
+export type ProductDetailsFragment = {
+  id: string;
+  slug: string;
+  name: string;
+  isAvailableForPurchase?: boolean | null;
+  description?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  updatedAt: string;
+  pricing?: {
+    priceRange?: {
+      start?: { gross: { currency: string; amount: number } } | null;
+      stop?: { gross: { currency: string; amount: number } } | null;
+    } | null;
+  } | null;
+  media?: Array<{ url: string; type: ProductMediaType; alt: string }> | null;
+  collections?: Array<{ name: string }> | null;
+  variants?: Array<{
+    id: string;
+    name: string;
+    attributes: Array<{
+      attribute: {
+        slug?: string | null;
+        name?: string | null;
+        choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+      };
+      values: Array<{ name?: string | null }>;
+    }>;
+    pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+  }> | null;
+};
+
 export type VariantFragment = {
   id: string;
   name: string;
@@ -24540,6 +24630,277 @@ export type VariantFragment = {
     values: Array<{ name?: string | null }>;
   }>;
   pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+};
+
+export type CheckoutAddLineMutationVariables = Exact<{
+  checkoutId: Scalars['ID'];
+  lines: Array<CheckoutLineInput> | CheckoutLineInput;
+}>;
+
+export type CheckoutAddLineMutation = {
+  checkoutLinesAdd?: {
+    errors: Array<{ code: CheckoutErrorCode; message?: string | null; field?: string | null }>;
+    checkout?: {
+      id: string;
+      quantity: number;
+      totalPrice: {
+        gross: { currency: string; amount: number };
+        tax: { currency: string; amount: number };
+      };
+      subtotalPrice: { gross: { currency: string; amount: number } };
+      lines: Array<{
+        id: string;
+        quantity: number;
+        variant: {
+          id: string;
+          name: string;
+          product: {
+            id: string;
+            slug: string;
+            name: string;
+            isAvailableForPurchase?: boolean | null;
+            description?: string | null;
+            seoTitle?: string | null;
+            seoDescription?: string | null;
+            updatedAt: string;
+            pricing?: {
+              priceRange?: {
+                start?: { gross: { currency: string; amount: number } } | null;
+                stop?: { gross: { currency: string; amount: number } } | null;
+              } | null;
+            } | null;
+            media?: Array<{ url: string; type: ProductMediaType; alt: string }> | null;
+            collections?: Array<{ name: string }> | null;
+            variants?: Array<{
+              id: string;
+              name: string;
+              attributes: Array<{
+                attribute: {
+                  slug?: string | null;
+                  name?: string | null;
+                  choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+                };
+                values: Array<{ name?: string | null }>;
+              }>;
+              pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+            }> | null;
+          };
+          attributes: Array<{
+            attribute: {
+              slug?: string | null;
+              name?: string | null;
+              choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+            };
+            values: Array<{ name?: string | null }>;
+          }>;
+          pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+        };
+      }>;
+    } | null;
+  } | null;
+};
+
+export type CheckoutDeleteLineMutationVariables = Exact<{
+  checkoutId: Scalars['ID'];
+  lineIds: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+export type CheckoutDeleteLineMutation = {
+  checkoutLinesDelete?: {
+    errors: Array<{ code: CheckoutErrorCode; message?: string | null; field?: string | null }>;
+    checkout?: {
+      id: string;
+      quantity: number;
+      totalPrice: {
+        gross: { currency: string; amount: number };
+        tax: { currency: string; amount: number };
+      };
+      subtotalPrice: { gross: { currency: string; amount: number } };
+      lines: Array<{
+        id: string;
+        quantity: number;
+        variant: {
+          id: string;
+          name: string;
+          product: {
+            id: string;
+            slug: string;
+            name: string;
+            isAvailableForPurchase?: boolean | null;
+            description?: string | null;
+            seoTitle?: string | null;
+            seoDescription?: string | null;
+            updatedAt: string;
+            pricing?: {
+              priceRange?: {
+                start?: { gross: { currency: string; amount: number } } | null;
+                stop?: { gross: { currency: string; amount: number } } | null;
+              } | null;
+            } | null;
+            media?: Array<{ url: string; type: ProductMediaType; alt: string }> | null;
+            collections?: Array<{ name: string }> | null;
+            variants?: Array<{
+              id: string;
+              name: string;
+              attributes: Array<{
+                attribute: {
+                  slug?: string | null;
+                  name?: string | null;
+                  choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+                };
+                values: Array<{ name?: string | null }>;
+              }>;
+              pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+            }> | null;
+          };
+          attributes: Array<{
+            attribute: {
+              slug?: string | null;
+              name?: string | null;
+              choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+            };
+            values: Array<{ name?: string | null }>;
+          }>;
+          pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+        };
+      }>;
+    } | null;
+  } | null;
+};
+
+export type CheckoutUpdateLineMutationVariables = Exact<{
+  checkoutId: Scalars['ID'];
+  lines: Array<CheckoutLineUpdateInput> | CheckoutLineUpdateInput;
+}>;
+
+export type CheckoutUpdateLineMutation = {
+  checkoutLinesUpdate?: {
+    errors: Array<{ code: CheckoutErrorCode; message?: string | null; field?: string | null }>;
+    checkout?: {
+      id: string;
+      quantity: number;
+      totalPrice: {
+        gross: { currency: string; amount: number };
+        tax: { currency: string; amount: number };
+      };
+      subtotalPrice: { gross: { currency: string; amount: number } };
+      lines: Array<{
+        id: string;
+        quantity: number;
+        variant: {
+          id: string;
+          name: string;
+          product: {
+            id: string;
+            slug: string;
+            name: string;
+            isAvailableForPurchase?: boolean | null;
+            description?: string | null;
+            seoTitle?: string | null;
+            seoDescription?: string | null;
+            updatedAt: string;
+            pricing?: {
+              priceRange?: {
+                start?: { gross: { currency: string; amount: number } } | null;
+                stop?: { gross: { currency: string; amount: number } } | null;
+              } | null;
+            } | null;
+            media?: Array<{ url: string; type: ProductMediaType; alt: string }> | null;
+            collections?: Array<{ name: string }> | null;
+            variants?: Array<{
+              id: string;
+              name: string;
+              attributes: Array<{
+                attribute: {
+                  slug?: string | null;
+                  name?: string | null;
+                  choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+                };
+                values: Array<{ name?: string | null }>;
+              }>;
+              pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+            }> | null;
+          };
+          attributes: Array<{
+            attribute: {
+              slug?: string | null;
+              name?: string | null;
+              choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+            };
+            values: Array<{ name?: string | null }>;
+          }>;
+          pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+        };
+      }>;
+    } | null;
+  } | null;
+};
+
+export type CreateCheckoutMutationVariables = Exact<{
+  input: CheckoutCreateInput;
+}>;
+
+export type CreateCheckoutMutation = {
+  checkoutCreate?: {
+    errors: Array<{ code: CheckoutErrorCode; message?: string | null; field?: string | null }>;
+    checkout?: {
+      id: string;
+      quantity: number;
+      totalPrice: {
+        gross: { currency: string; amount: number };
+        tax: { currency: string; amount: number };
+      };
+      subtotalPrice: { gross: { currency: string; amount: number } };
+      lines: Array<{
+        id: string;
+        quantity: number;
+        variant: {
+          id: string;
+          name: string;
+          product: {
+            id: string;
+            slug: string;
+            name: string;
+            isAvailableForPurchase?: boolean | null;
+            description?: string | null;
+            seoTitle?: string | null;
+            seoDescription?: string | null;
+            updatedAt: string;
+            pricing?: {
+              priceRange?: {
+                start?: { gross: { currency: string; amount: number } } | null;
+                stop?: { gross: { currency: string; amount: number } } | null;
+              } | null;
+            } | null;
+            media?: Array<{ url: string; type: ProductMediaType; alt: string }> | null;
+            collections?: Array<{ name: string }> | null;
+            variants?: Array<{
+              id: string;
+              name: string;
+              attributes: Array<{
+                attribute: {
+                  slug?: string | null;
+                  name?: string | null;
+                  choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+                };
+                values: Array<{ name?: string | null }>;
+              }>;
+              pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+            }> | null;
+          };
+          attributes: Array<{
+            attribute: {
+              slug?: string | null;
+              name?: string | null;
+              choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+            };
+            values: Array<{ name?: string | null }>;
+          }>;
+          pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+        };
+      }>;
+    } | null;
+  } | null;
 };
 
 export type GetCategoryBySlugQueryVariables = Exact<{
@@ -24599,6 +24960,70 @@ export type GetCategoryProductsBySlugQuery = {
         };
       }>;
     } | null;
+  } | null;
+};
+
+export type GetCheckoutByIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+export type GetCheckoutByIdQuery = {
+  checkout?: {
+    id: string;
+    quantity: number;
+    totalPrice: {
+      gross: { currency: string; amount: number };
+      tax: { currency: string; amount: number };
+    };
+    subtotalPrice: { gross: { currency: string; amount: number } };
+    lines: Array<{
+      id: string;
+      quantity: number;
+      variant: {
+        id: string;
+        name: string;
+        product: {
+          id: string;
+          slug: string;
+          name: string;
+          isAvailableForPurchase?: boolean | null;
+          description?: string | null;
+          seoTitle?: string | null;
+          seoDescription?: string | null;
+          updatedAt: string;
+          pricing?: {
+            priceRange?: {
+              start?: { gross: { currency: string; amount: number } } | null;
+              stop?: { gross: { currency: string; amount: number } } | null;
+            } | null;
+          } | null;
+          media?: Array<{ url: string; type: ProductMediaType; alt: string }> | null;
+          collections?: Array<{ name: string }> | null;
+          variants?: Array<{
+            id: string;
+            name: string;
+            attributes: Array<{
+              attribute: {
+                slug?: string | null;
+                name?: string | null;
+                choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+              };
+              values: Array<{ name?: string | null }>;
+            }>;
+            pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+          }> | null;
+        };
+        attributes: Array<{
+          attribute: {
+            slug?: string | null;
+            name?: string | null;
+            choices?: { edges: Array<{ node: { name?: string | null } }> } | null;
+          };
+          values: Array<{ name?: string | null }>;
+        }>;
+        pricing?: { price?: { gross: { currency: string; amount: number } } | null } | null;
+      };
+    }>;
   } | null;
 };
 
@@ -24901,6 +25326,198 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
+export const VariantFragmentDoc = new TypedDocumentString(`
+    fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
+    }
+  }
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<VariantFragment, unknown>;
+export const ProductDetailsFragmentDoc = new TypedDocumentString(`
+    fragment ProductDetails on Product {
+  id
+  slug
+  name
+  isAvailableForPurchase
+  description
+  seoTitle
+  seoDescription
+  pricing {
+    priceRange {
+      start {
+        gross {
+          currency
+          amount
+        }
+      }
+      stop {
+        gross {
+          currency
+          amount
+        }
+      }
+    }
+  }
+  media {
+    url(size: 2160)
+    type
+    alt
+  }
+  collections {
+    name
+  }
+  updatedAt
+  variants {
+    ...Variant
+  }
+}
+    fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
+    }
+  }
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<ProductDetailsFragment, unknown>;
+export const CheckoutFragmentDoc = new TypedDocumentString(`
+    fragment Checkout on Checkout {
+  id
+  totalPrice {
+    gross {
+      currency
+      amount
+    }
+    tax {
+      currency
+      amount
+    }
+  }
+  subtotalPrice {
+    gross {
+      currency
+      amount
+    }
+  }
+  quantity
+  lines {
+    id
+    quantity
+    variant {
+      ...Variant
+      product {
+        ...ProductDetails
+      }
+    }
+  }
+}
+    fragment ProductDetails on Product {
+  id
+  slug
+  name
+  isAvailableForPurchase
+  description
+  seoTitle
+  seoDescription
+  pricing {
+    priceRange {
+      start {
+        gross {
+          currency
+          amount
+        }
+      }
+      stop {
+        gross {
+          currency
+          amount
+        }
+      }
+    }
+  }
+  media {
+    url(size: 2160)
+    type
+    alt
+  }
+  collections {
+    name
+  }
+  updatedAt
+  variants {
+    ...Variant
+  }
+}
+fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
+    }
+  }
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<CheckoutFragment, unknown>;
 export const FeaturedProductFragmentDoc = new TypedDocumentString(`
     fragment FeaturedProduct on Product {
   id
@@ -24949,8 +25566,109 @@ export const FeaturedProductFragmentDoc = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<FeaturedProductFragment, unknown>;
-export const VariantFragmentDoc = new TypedDocumentString(`
-    fragment Variant on ProductVariant {
+export const MenuItemFragmentDoc = new TypedDocumentString(`
+    fragment MenuItem on MenuItem {
+  id
+  name
+  url
+  collection {
+    slug
+    products(first: 0) {
+      totalCount
+    }
+  }
+  category {
+    slug
+    products(channel: "default-channel", first: 0) {
+      totalCount
+    }
+  }
+  page {
+    slug
+  }
+}
+    `) as unknown as TypedDocumentString<MenuItemFragment, unknown>;
+export const CheckoutAddLineDocument = new TypedDocumentString(`
+    mutation CheckoutAddLine($checkoutId: ID!, $lines: [CheckoutLineInput!]!) {
+  checkoutLinesAdd(id: $checkoutId, lines: $lines) {
+    errors {
+      code
+      message
+      field
+    }
+    checkout {
+      ...Checkout
+    }
+  }
+}
+    fragment Checkout on Checkout {
+  id
+  totalPrice {
+    gross {
+      currency
+      amount
+    }
+    tax {
+      currency
+      amount
+    }
+  }
+  subtotalPrice {
+    gross {
+      currency
+      amount
+    }
+  }
+  quantity
+  lines {
+    id
+    quantity
+    variant {
+      ...Variant
+      product {
+        ...ProductDetails
+      }
+    }
+  }
+}
+fragment ProductDetails on Product {
+  id
+  slug
+  name
+  isAvailableForPurchase
+  description
+  seoTitle
+  seoDescription
+  pricing {
+    priceRange {
+      start {
+        gross {
+          currency
+          amount
+        }
+      }
+      stop {
+        gross {
+          currency
+          amount
+        }
+      }
+    }
+  }
+  media {
+    url(size: 2160)
+    type
+    alt
+  }
+  collections {
+    name
+  }
+  updatedAt
+  variants {
+    ...Variant
+  }
+}
+fragment Variant on ProductVariant {
   id
   name
   attributes {
@@ -24977,30 +25695,337 @@ export const VariantFragmentDoc = new TypedDocumentString(`
       }
     }
   }
+}`) as unknown as TypedDocumentString<CheckoutAddLineMutation, CheckoutAddLineMutationVariables>;
+export const CheckoutDeleteLineDocument = new TypedDocumentString(`
+    mutation CheckoutDeleteLine($checkoutId: ID!, $lineIds: [ID!]!) {
+  checkoutLinesDelete(id: $checkoutId, linesIds: $lineIds) {
+    errors {
+      code
+      message
+      field
+    }
+    checkout {
+      ...Checkout
+    }
+  }
 }
-    `) as unknown as TypedDocumentString<VariantFragment, unknown>;
-export const MenuItemFragmentDoc = new TypedDocumentString(`
-    fragment MenuItem on MenuItem {
+    fragment Checkout on Checkout {
+  id
+  totalPrice {
+    gross {
+      currency
+      amount
+    }
+    tax {
+      currency
+      amount
+    }
+  }
+  subtotalPrice {
+    gross {
+      currency
+      amount
+    }
+  }
+  quantity
+  lines {
+    id
+    quantity
+    variant {
+      ...Variant
+      product {
+        ...ProductDetails
+      }
+    }
+  }
+}
+fragment ProductDetails on Product {
+  id
+  slug
+  name
+  isAvailableForPurchase
+  description
+  seoTitle
+  seoDescription
+  pricing {
+    priceRange {
+      start {
+        gross {
+          currency
+          amount
+        }
+      }
+      stop {
+        gross {
+          currency
+          amount
+        }
+      }
+    }
+  }
+  media {
+    url(size: 2160)
+    type
+    alt
+  }
+  collections {
+    name
+  }
+  updatedAt
+  variants {
+    ...Variant
+  }
+}
+fragment Variant on ProductVariant {
   id
   name
-  url
-  collection {
-    slug
-    products(first: 0) {
-      totalCount
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
     }
   }
-  category {
-    slug
-    products(channel: "default-channel", first: 0) {
-      totalCount
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
     }
   }
-  page {
-    slug
+}`) as unknown as TypedDocumentString<
+  CheckoutDeleteLineMutation,
+  CheckoutDeleteLineMutationVariables
+>;
+export const CheckoutUpdateLineDocument = new TypedDocumentString(`
+    mutation CheckoutUpdateLine($checkoutId: ID!, $lines: [CheckoutLineUpdateInput!]!) {
+  checkoutLinesUpdate(id: $checkoutId, lines: $lines) {
+    errors {
+      code
+      message
+      field
+    }
+    checkout {
+      ...Checkout
+    }
   }
 }
-    `) as unknown as TypedDocumentString<MenuItemFragment, unknown>;
+    fragment Checkout on Checkout {
+  id
+  totalPrice {
+    gross {
+      currency
+      amount
+    }
+    tax {
+      currency
+      amount
+    }
+  }
+  subtotalPrice {
+    gross {
+      currency
+      amount
+    }
+  }
+  quantity
+  lines {
+    id
+    quantity
+    variant {
+      ...Variant
+      product {
+        ...ProductDetails
+      }
+    }
+  }
+}
+fragment ProductDetails on Product {
+  id
+  slug
+  name
+  isAvailableForPurchase
+  description
+  seoTitle
+  seoDescription
+  pricing {
+    priceRange {
+      start {
+        gross {
+          currency
+          amount
+        }
+      }
+      stop {
+        gross {
+          currency
+          amount
+        }
+      }
+    }
+  }
+  media {
+    url(size: 2160)
+    type
+    alt
+  }
+  collections {
+    name
+  }
+  updatedAt
+  variants {
+    ...Variant
+  }
+}
+fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
+    }
+  }
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<
+  CheckoutUpdateLineMutation,
+  CheckoutUpdateLineMutationVariables
+>;
+export const CreateCheckoutDocument = new TypedDocumentString(`
+    mutation CreateCheckout($input: CheckoutCreateInput!) {
+  checkoutCreate(input: $input) {
+    errors {
+      code
+      message
+      field
+    }
+    checkout {
+      ...Checkout
+    }
+  }
+}
+    fragment Checkout on Checkout {
+  id
+  totalPrice {
+    gross {
+      currency
+      amount
+    }
+    tax {
+      currency
+      amount
+    }
+  }
+  subtotalPrice {
+    gross {
+      currency
+      amount
+    }
+  }
+  quantity
+  lines {
+    id
+    quantity
+    variant {
+      ...Variant
+      product {
+        ...ProductDetails
+      }
+    }
+  }
+}
+fragment ProductDetails on Product {
+  id
+  slug
+  name
+  isAvailableForPurchase
+  description
+  seoTitle
+  seoDescription
+  pricing {
+    priceRange {
+      start {
+        gross {
+          currency
+          amount
+        }
+      }
+      stop {
+        gross {
+          currency
+          amount
+        }
+      }
+    }
+  }
+  media {
+    url(size: 2160)
+    type
+    alt
+  }
+  collections {
+    name
+  }
+  updatedAt
+  variants {
+    ...Variant
+  }
+}
+fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
+    }
+  }
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<CreateCheckoutMutation, CreateCheckoutMutationVariables>;
 export const GetCategoryBySlugDocument = new TypedDocumentString(`
     query GetCategoryBySlug($slug: String!) {
   category(slug: $slug) {
@@ -25101,6 +26126,107 @@ export const GetCategoryProductsBySlugDocument = new TypedDocumentString(`
   GetCategoryProductsBySlugQuery,
   GetCategoryProductsBySlugQueryVariables
 >;
+export const GetCheckoutByIdDocument = new TypedDocumentString(`
+    query GetCheckoutById($id: ID!) {
+  checkout(id: $id) {
+    ...Checkout
+  }
+}
+    fragment Checkout on Checkout {
+  id
+  totalPrice {
+    gross {
+      currency
+      amount
+    }
+    tax {
+      currency
+      amount
+    }
+  }
+  subtotalPrice {
+    gross {
+      currency
+      amount
+    }
+  }
+  quantity
+  lines {
+    id
+    quantity
+    variant {
+      ...Variant
+      product {
+        ...ProductDetails
+      }
+    }
+  }
+}
+fragment ProductDetails on Product {
+  id
+  slug
+  name
+  isAvailableForPurchase
+  description
+  seoTitle
+  seoDescription
+  pricing {
+    priceRange {
+      start {
+        gross {
+          currency
+          amount
+        }
+      }
+      stop {
+        gross {
+          currency
+          amount
+        }
+      }
+    }
+  }
+  media {
+    url(size: 2160)
+    type
+    alt
+  }
+  collections {
+    name
+  }
+  updatedAt
+  variants {
+    ...Variant
+  }
+}
+fragment Variant on ProductVariant {
+  id
+  name
+  attributes {
+    attribute {
+      slug
+      name
+      choices(first: 100) {
+        edges {
+          node {
+            name
+          }
+        }
+      }
+    }
+    values {
+      name
+    }
+  }
+  pricing {
+    price {
+      gross {
+        currency
+        amount
+      }
+    }
+  }
+}`) as unknown as TypedDocumentString<GetCheckoutByIdQuery, GetCheckoutByIdQueryVariables>;
 export const GetCollectionBySlugDocument = new TypedDocumentString(`
     query GetCollectionBySlug($slug: String!) {
   collection(channel: "default-channel", slug: $slug) {
@@ -25352,44 +26478,47 @@ export const GetPagesDocument = new TypedDocumentString(`
 export const GetProductBySlugDocument = new TypedDocumentString(`
     query GetProductBySlug($slug: String!) {
   product(channel: "default-channel", slug: $slug) {
-    id
-    slug
-    name
-    isAvailableForPurchase
-    description
-    seoTitle
-    seoDescription
-    pricing {
-      priceRange {
-        start {
-          gross {
-            currency
-            amount
-          }
+    ...ProductDetails
+  }
+}
+    fragment ProductDetails on Product {
+  id
+  slug
+  name
+  isAvailableForPurchase
+  description
+  seoTitle
+  seoDescription
+  pricing {
+    priceRange {
+      start {
+        gross {
+          currency
+          amount
         }
-        stop {
-          gross {
-            currency
-            amount
-          }
+      }
+      stop {
+        gross {
+          currency
+          amount
         }
       }
     }
-    media {
-      url(size: 2160)
-      type
-      alt
-    }
-    collections {
-      name
-    }
-    updatedAt
-    variants {
-      ...Variant
-    }
+  }
+  media {
+    url(size: 2160)
+    type
+    alt
+  }
+  collections {
+    name
+  }
+  updatedAt
+  variants {
+    ...Variant
   }
 }
-    fragment Variant on ProductVariant {
+fragment Variant on ProductVariant {
   id
   name
   attributes {

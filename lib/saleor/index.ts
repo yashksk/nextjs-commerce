@@ -1,7 +1,12 @@
 import { Cart, Collection, Menu, Page, Product } from 'lib/types';
 import {
+  CheckoutAddLineDocument,
+  CheckoutDeleteLineDocument,
+  CheckoutUpdateLineDocument,
+  CreateCheckoutDocument,
   GetCategoryBySlugDocument,
   GetCategoryProductsBySlugDocument,
+  GetCheckoutByIdDocument,
   GetCollectionBySlugDocument,
   GetCollectionProductsBySlugDocument,
   GetCollectionsDocument,
@@ -15,7 +20,7 @@ import {
   SearchProductsDocument,
   TypedDocumentString
 } from './generated/graphql';
-import { saleorProductToVercelProduct } from './mappers';
+import { saleorCheckoutToVercelCart, saleorProductToVercelProduct } from './mappers';
 import { invariant } from './utils';
 
 const endpoint = process.env.SALEOR_INSTANCE_URL;
@@ -320,32 +325,93 @@ export async function getPages(): Promise<Page[]> {
 }
 
 export async function getCart(cartId: string): Promise<Cart | null> {
-  // @todo
-  return null;
+  const saleorCheckout = await saleorFetch({
+    query: GetCheckoutByIdDocument,
+    variables: {
+      id: cartId
+    }
+  });
+
+  if (!saleorCheckout.checkout) {
+    return null;
+  }
+
+  return saleorCheckoutToVercelCart(saleorCheckout.checkout);
 }
+
 export async function createCart(): Promise<Cart> {
-  // @todo
-  throw new Error(`Not implemented`);
+  const saleorCheckout = await saleorFetch({
+    query: CreateCheckoutDocument,
+    variables: {
+      input: {
+        channel: 'default-channel',
+        lines: []
+      }
+    }
+  });
+
+  if (!saleorCheckout.checkoutCreate?.checkout) {
+    throw new Error(`Couldn't create checkout.`);
+  }
+
+  return saleorCheckoutToVercelCart(saleorCheckout.checkoutCreate.checkout);
 }
-export async function getProductRecommendations(productId: string): Promise<Product[]> {
-  // @todo
-  return [];
-}
+
 export async function addToCart(
   cartId: string,
   lines: { merchandiseId: string; quantity: number }[]
 ): Promise<Cart> {
-  // @todo
-  throw new Error(`Not implemented`);
+  const saleorCheckout = await saleorFetch({
+    query: CheckoutAddLineDocument,
+    variables: {
+      checkoutId: cartId,
+      lines: lines.map(({ merchandiseId, quantity }) => ({ variantId: merchandiseId, quantity }))
+    }
+  });
+
+  if (!saleorCheckout.checkoutLinesAdd?.checkout) {
+    throw new Error(`Couldn't add lines to checkout.`);
+  }
+
+  return saleorCheckoutToVercelCart(saleorCheckout.checkoutLinesAdd.checkout);
 }
+
 export async function updateCart(
   cartId: string,
   lines: { id: string; merchandiseId: string; quantity: number }[]
 ): Promise<Cart> {
-  // @todo
-  throw new Error(`Not implemented`);
+  const saleorCheckout = await saleorFetch({
+    query: CheckoutUpdateLineDocument,
+    variables: {
+      checkoutId: cartId,
+      lines: lines.map(({ merchandiseId, quantity }) => ({ lineId: merchandiseId, quantity }))
+    }
+  });
+
+  if (!saleorCheckout.checkoutLinesUpdate?.checkout) {
+    throw new Error(`Couldn't update lines in checkout.`);
+  }
+
+  return saleorCheckoutToVercelCart(saleorCheckout.checkoutLinesUpdate.checkout);
 }
+
 export async function removeFromCart(cartId: string, lineIds: string[]): Promise<Cart> {
+  const saleorCheckout = await saleorFetch({
+    query: CheckoutDeleteLineDocument,
+    variables: {
+      checkoutId: cartId,
+      lineIds
+    }
+  });
+
+  if (!saleorCheckout.checkoutLinesDelete?.checkout) {
+    throw new Error(`Couldn't remove lines from checkout.`);
+  }
+
+  return saleorCheckoutToVercelCart(saleorCheckout.checkoutLinesDelete.checkout);
+}
+
+export async function getProductRecommendations(productId: string): Promise<Product[]> {
   // @todo
-  throw new Error(`Not implemented`);
+  return [];
 }

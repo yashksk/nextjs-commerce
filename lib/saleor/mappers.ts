@@ -1,6 +1,6 @@
-import { Product } from 'lib/types';
+import { Cart, Product } from 'lib/types';
 import { parseEditorJsToHtml } from './editorjs';
-import { GetProductBySlugQuery, VariantFragment } from './generated/graphql';
+import { CheckoutFragment, GetProductBySlugQuery, VariantFragment } from './generated/graphql';
 
 export function saleorProductToVercelProduct(
   product: Exclude<GetProductBySlugQuery['product'], null | undefined>
@@ -92,4 +92,59 @@ export function saleorVariantsToVercelVariants(
       };
     }) || []
   );
+}
+
+export function saleorCheckoutToVercelCart(checkout: CheckoutFragment): Cart {
+  const domain = new URL(process.env.SALEOR_INSTANCE_URL!).hostname;
+  const checkoutUrl = new URL(`https://demo.saleor.io/checkout/`);
+  checkoutUrl.searchParams.append('checkout', checkout.id);
+  checkoutUrl.searchParams.append('locale', `en-US`);
+  checkoutUrl.searchParams.append('channel', `default-channel`);
+  checkoutUrl.searchParams.append('saleorApiUrl', process.env.SALEOR_INSTANCE_URL!);
+  checkoutUrl.searchParams.append('domain', domain);
+
+  return {
+    id: checkout.id,
+    checkoutUrl: checkoutUrl.toString(),
+    cost: {
+      subtotalAmount: {
+        amount: checkout.subtotalPrice.gross.amount.toString(),
+        currencyCode: checkout.subtotalPrice.gross.currency
+      },
+      totalAmount: {
+        amount: checkout.totalPrice.gross.amount.toString(),
+        currencyCode: checkout.totalPrice.gross.currency
+      },
+      totalTaxAmount: {
+        amount: checkout.totalPrice.tax.amount.toString(),
+        currencyCode: checkout.totalPrice.tax.currency
+      }
+    },
+    lines: checkout.lines.map((line) => {
+      return {
+        id: line.id,
+        quantity: line.quantity,
+        cost: {
+          totalAmount: {
+            amount: line.variant.pricing?.price?.gross.amount.toString() || '0',
+            currencyCode: line.variant.pricing?.price?.gross.currency || ''
+          }
+        },
+        merchandise: {
+          id: line.variant.id,
+          title: `${line.variant.product.name} - ${line.variant.name}`,
+          selectedOptions: line.variant.attributes.flatMap((attribute) => {
+            return attribute.values.map((value) => {
+              return {
+                name: attribute.attribute.name || '',
+                value: value.name || ''
+              };
+            });
+          }),
+          product: saleorProductToVercelProduct(line.variant.product)
+        }
+      };
+    }),
+    totalQuantity: checkout.quantity
+  };
 }
