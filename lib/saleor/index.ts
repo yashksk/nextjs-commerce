@@ -74,19 +74,21 @@ export async function getCollections(): Promise<Collection[]> {
   });
 
   return (
-    saleorCollections.collections?.edges.map((edge) => {
-      return {
-        handle: edge.node.slug,
-        title: edge.node.name,
-        description: edge.node.description as string,
-        seo: {
-          title: edge.node.seoTitle || edge.node.name,
-          description: edge.node.seoDescription || ''
-        },
-        updatedAt: edge.node.products?.edges?.[0]?.node.updatedAt || '',
-        path: `/search/${edge.node.slug}`
-      };
-    }) ?? []
+    saleorCollections.collections?.edges
+      .map((edge) => {
+        return {
+          handle: edge.node.slug,
+          title: edge.node.name,
+          description: edge.node.description as string,
+          seo: {
+            title: edge.node.seoTitle || edge.node.name,
+            description: edge.node.seoDescription || ''
+          },
+          updatedAt: edge.node.products?.edges?.[0]?.node.updatedAt || '',
+          path: `/search/${edge.node.slug}`
+        };
+      })
+      .filter((el) => !el.handle.startsWith(`hidden-`)) ?? []
   );
 }
 
