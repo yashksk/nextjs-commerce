@@ -347,6 +347,7 @@ export async function createCart(): Promise<Cart> {
   });
 
   if (!saleorCheckout.checkoutCreate?.checkout) {
+    console.error(saleorCheckout.checkoutCreate?.errors);
     throw new Error(`Couldn't create checkout.`);
   }
 
@@ -366,6 +367,7 @@ export async function addToCart(
   });
 
   if (!saleorCheckout.checkoutLinesAdd?.checkout) {
+    console.error(saleorCheckout.checkoutLinesAdd?.errors);
     throw new Error(`Couldn't add lines to checkout.`);
   }
 
@@ -380,11 +382,12 @@ export async function updateCart(
     query: CheckoutUpdateLineDocument,
     variables: {
       checkoutId: cartId,
-      lines: lines.map(({ merchandiseId, quantity }) => ({ lineId: merchandiseId, quantity }))
+      lines: lines.map(({ id, quantity }) => ({ lineId: id, quantity }))
     }
   });
 
   if (!saleorCheckout.checkoutLinesUpdate?.checkout) {
+    console.error(saleorCheckout.checkoutLinesUpdate?.errors);
     throw new Error(`Couldn't update lines in checkout.`);
   }
 
@@ -401,6 +404,7 @@ export async function removeFromCart(cartId: string, lineIds: string[]): Promise
   });
 
   if (!saleorCheckout.checkoutLinesDelete?.checkout) {
+    console.error(saleorCheckout.checkoutLinesDelete?.errors);
     throw new Error(`Couldn't remove lines from checkout.`);
   }
 

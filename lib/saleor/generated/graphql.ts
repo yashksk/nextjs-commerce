@@ -25382,7 +25382,7 @@ export const ProductDetailsFragmentDoc = new TypedDocumentString(`
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }
@@ -25478,7 +25478,7 @@ export const CheckoutFragmentDoc = new TypedDocumentString(`
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }
@@ -25544,7 +25544,7 @@ export const FeaturedProductFragmentDoc = new TypedDocumentString(`
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }
@@ -25656,7 +25656,7 @@ fragment ProductDetails on Product {
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }
@@ -25764,7 +25764,7 @@ fragment ProductDetails on Product {
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }
@@ -25875,7 +25875,7 @@ fragment ProductDetails on Product {
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }
@@ -25986,7 +25986,7 @@ fragment ProductDetails on Product {
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }
@@ -26187,7 +26187,7 @@ fragment ProductDetails on Product {
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }
@@ -26384,7 +26384,7 @@ export const GetFeaturedProductsDocument = new TypedDocumentString(`
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }
@@ -26506,7 +26506,7 @@ export const GetProductBySlugDocument = new TypedDocumentString(`
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }

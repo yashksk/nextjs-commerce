@@ -23,7 +23,7 @@ fragment FeaturedProduct on Product {
     }
   }
   media {
-    url(size: 2160)
+    url(size: 1080)
     type
     alt
   }
