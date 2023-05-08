@@ -13,6 +13,10 @@ module.exports = {
       {
         protocol: 'https',
         hostname: 'vercel.saleor.cloud'
+      },
+      {
+        protocol: 'https',
+        hostname: 'demo.saleor.io'
       }
     ]
   }
