@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { addToCart, removeFromCart, updateCart } from 'lib/saleor';
-import { isShopifyError } from 'lib/type-guards';
+import { isVercelCommerceError } from 'lib/type-guards';
 
 function formatErrorMessage(err: Error): string {
   return JSON.stringify(err, Object.getOwnPropertyNames(err));
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     await addToCart(cartId, [{ merchandiseId, quantity: 1 }]);
     return NextResponse.json({ status: 204 });
   } catch (e) {
-    if (isShopifyError(e)) {
+    if (isVercelCommerceError(e)) {
       return NextResponse.json({ message: formatErrorMessage(e.message) }, { status: e.status });
     }
 
@@ -48,7 +48,7 @@ export async function PUT(req: NextRequest): Promise<Response> {
     ]);
     return NextResponse.json({ status: 204 });
   } catch (e) {
-    if (isShopifyError(e)) {
+    if (isVercelCommerceError(e)) {
       return NextResponse.json({ message: formatErrorMessage(e.message) }, { status: e.status });
     }
 
@@ -67,7 +67,7 @@ export async function DELETE(req: NextRequest): Promise<Response> {
     await removeFromCart(cartId, [lineId]);
     return NextResponse.json({ status: 204 });
   } catch (e) {
-    if (isShopifyError(e)) {
+    if (isVercelCommerceError(e)) {
       return NextResponse.json({ message: formatErrorMessage(e.message) }, { status: e.status });
     }
 

@@ -171,16 +171,12 @@ export async function getCollection(handle: string): Promise<Collection | undefi
   };
 }
 
-const handleToSlug: Record<string, string> = {
-  'hidden-homepage-featured-items': 'featured',
-  'hidden-homepage-carousel': 'all-products'
-};
 const _getCollectionProducts = async (handle: string) =>
   (
     await saleorFetch({
       query: GetCollectionProductsBySlugDocument,
       variables: {
-        slug: handleToSlug[handle] || handle
+        slug: handle
       }
     })
   ).collection;
@@ -189,7 +185,7 @@ const _getCategoryProducts = async (handle: string) =>
     await saleorFetch({
       query: GetCategoryProductsBySlugDocument,
       variables: {
-        slug: handleToSlug[handle] || handle
+        slug: handle
       }
     })
   ).category;
