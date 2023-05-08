@@ -327,7 +327,8 @@ export async function getCart(cartId: string): Promise<Cart | null> {
     query: GetCheckoutByIdDocument,
     variables: {
       id: cartId
-    }
+    },
+    cache: 'no-store'
   });
 
   if (!saleorCheckout.checkout) {
@@ -345,7 +346,8 @@ export async function createCart(): Promise<Cart> {
         channel: 'default-channel',
         lines: []
       }
-    }
+    },
+    cache: 'no-store'
   });
 
   if (!saleorCheckout.checkoutCreate?.checkout) {
@@ -365,7 +367,8 @@ export async function addToCart(
     variables: {
       checkoutId: cartId,
       lines: lines.map(({ merchandiseId, quantity }) => ({ variantId: merchandiseId, quantity }))
-    }
+    },
+    cache: 'no-store'
   });
 
   if (!saleorCheckout.checkoutLinesAdd?.checkout) {
@@ -385,7 +388,8 @@ export async function updateCart(
     variables: {
       checkoutId: cartId,
       lines: lines.map(({ id, quantity }) => ({ lineId: id, quantity }))
-    }
+    },
+    cache: 'no-store'
   });
 
   if (!saleorCheckout.checkoutLinesUpdate?.checkout) {
@@ -402,7 +406,8 @@ export async function removeFromCart(cartId: string, lineIds: string[]): Promise
     variables: {
       checkoutId: cartId,
       lineIds
-    }
+    },
+    cache: 'no-store'
   });
 
   if (!saleorCheckout.checkoutLinesDelete?.checkout) {
